@@ -15,9 +15,5 @@ export default function SetupPage() {
   }, [isOpen, onOpen])
 
 
-  return (
-    <main className='p-4'>
-      Root Pag
-    </main>
-  )
+  return null
 }
