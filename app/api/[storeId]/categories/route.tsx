@@ -1,9 +1,8 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-
+import { auth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 
-export async function PATCH(
+export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
@@ -11,52 +10,60 @@ export async function PATCH(
     const { userId } = auth();
     const body = await req.json();
 
-    const { name } = body;
+    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-    if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
+    const { name, billboardId } = body;
 
     if (!name) return new NextResponse("Name is required", { status: 400 });
+
+    if (!billboardId)
+      return new NextResponse("Billboard id is required", { status: 400 });
 
     if (!params.storeId)
       return new NextResponse("Store id is required", { status: 400 });
 
-    const store = await prismadb.store.updateMany({
+    const storeByUserId = prismadb.store.findFirst({
       where: {
         id: params.storeId,
         userId,
       },
+    });
+
+    if (!storeByUserId)
+      return new NextResponse("Unauthorized", { status: 403 });
+
+    const category = await prismadb.category.create({
       data: {
         name,
+        storeId: params.storeId,
+        billboardId,
       },
     });
-    return NextResponse.json(store);
+
+    return NextResponse.json(category);
   } catch (error) {
-    console.log("[STORE_PATCH]", error);
+    console.log("[CATEGORIES_POST]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
-export async function DELETE(
+export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const { userId } = auth();
-
-    if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
-
     if (!params.storeId)
       return new NextResponse("Store id is required", { status: 400 });
 
-    await prismadb.store.deleteMany({
+    const categories = await prismadb.category.findMany({
       where: {
-        id: params.storeId,
-        userId,
+        storeId: params.storeId,
       },
     });
-    return new NextResponse("", { status: 201 });
+
+    return NextResponse.json(categories);
   } catch (error) {
-    console.log("[STORE_DELETE]", error);
+    console.log("[CATEGORIES_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
