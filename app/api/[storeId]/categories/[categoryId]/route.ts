@@ -83,22 +83,22 @@ export async function DELETE(
   }
 }
 
-// export async function GET(
-//   req: Request,
-//   { params }: { params: { billboardId: string } }
-// ) {
-//   try {
-//     if (!params.billboardId)
-//       return new NextResponse("Billboard id is required", { status: 400 });
+export async function GET(
+  req: Request,
+  { params }: { params: { categoryId: string } }
+) {
+  try {
+    if (!params.categoryId)
+      return new NextResponse("Category id is required", { status: 400 });
 
-//     const category = await prismadb.category.findUnique({
-//       where: {
-//         id: params.billboardId,
-//       },
-//     });
-//     return NextResponse.json(category);
-//   } catch (error) {
-//     console.log("[BILLBOARD_GET]", error);
-//     return new NextResponse("Internal error", { status: 500 });
-//   }
-// }
+    const category = await prismadb.category.findUnique({
+      where: {
+        id: params.categoryId,
+      },
+    });
+    return NextResponse.json(category);
+  } catch (error) {
+    console.log("[CATEGORY_GET]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}

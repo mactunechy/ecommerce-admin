@@ -86,7 +86,8 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
 
       await axios.delete(`/api/${params.storeId}/colors/${params.colorId}`);
 
-      router.push("/");
+      router.refresh();
+      router.push(`/${params.storeId}/colors`);
       toast.success("Color deleted.");
     } catch (error) {
       toast.error("Make sure you removed all products using this color first.");
@@ -146,7 +147,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Color</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-x-4">
                       <Input

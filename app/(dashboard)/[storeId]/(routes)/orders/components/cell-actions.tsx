@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-import { BillboardColumn } from "./columns";
+import { OrderColumn } from "./columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionsProps {
-  data: BillboardColumn;
+  data: OrderColumn;
 }
 
 const CellActions: React.FC<CellActionsProps> = ({ data }) => {

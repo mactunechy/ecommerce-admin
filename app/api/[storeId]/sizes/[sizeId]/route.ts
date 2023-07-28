@@ -82,22 +82,22 @@ export async function DELETE(
   }
 }
 
-// export async function GET(
-//   req: Request,
-//   { params }: { params: { value: string } }
-// ) {
-//   try {
-//     if (!params.value)
-//       return new NextResponse("Billboard id is required", { status: 400 });
+export async function GET(
+  req: Request,
+  { params }: { params: { sizeId: string } }
+) {
+  try {
+    if (!params.sizeId)
+      return new NextResponse("Size id is required", { status: 400 });
 
-//     const size = await prismadb.size.findUnique({
-//       where: {
-//         id: params.value,
-//       },
-//     });
-//     return NextResponse.json(size);
-//   } catch (error) {
-//     console.log("[BILLBOARD_GET]", error);
-//     return new NextResponse("Internal error", { status: 500 });
-//   }
-// }
+    const size = await prismadb.size.findUnique({
+      where: {
+        id: params.sizeId,
+      },
+    });
+    return NextResponse.json(size);
+  } catch (error) {
+    console.log("SIZE_GET]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
