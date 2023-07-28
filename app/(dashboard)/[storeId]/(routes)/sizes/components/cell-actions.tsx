@@ -30,7 +30,7 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Size ID copied to clipboard.");
+    toast.success("Billboard ID copied to clipboard.");
   };
 
   const onDelete = async () => {
@@ -41,10 +41,10 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
 
       router.refresh();
       router.push(`/${params.storeId}/sizes`);
-      toast.success("Size deleted.");
+      toast.success("Billboard deleted.");
     } catch (error) {
       toast.error(
-        "Make sure you removed all categories using this size first."
+        "Make sure you removed all categories using this billboard first."
       );
     } finally {
       setLoading(false);

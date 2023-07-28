@@ -5,7 +5,7 @@ import prismadb from "@/lib/prismadb";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { storeId: string; categoryId: string } }
+  { params }: { params: { storeId: string; sizeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -13,12 +13,11 @@ export async function PATCH(
 
     if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
 
-    const { name, billboardId } = body;
+    const { name, value } = body;
 
     if (!name) return new NextResponse("Name is required", { status: 400 });
 
-    if (!billboardId)
-      return new NextResponse("Billboard id is required", { status: 400 });
+    if (!value) return new NextResponse("Value is required", { status: 400 });
 
     if (!params.storeId)
       return new NextResponse("Store id is required", { status: 400 });
@@ -33,25 +32,25 @@ export async function PATCH(
     if (!storeByUserId)
       return new NextResponse("Unauthorized", { status: 403 });
 
-    const category = await prismadb.category.updateMany({
+    const size = await prismadb.size.updateMany({
       where: {
-        id: params.categoryId,
+        id: params.sizeId,
       },
       data: {
         name,
-        billboardId,
+        value,
       },
     });
-    return NextResponse.json(category);
+    return NextResponse.json(size);
   } catch (error) {
-    console.log("[CATEGORIES_PATCH]", error);
+    console.log("[SIZES_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { storeId: string; categoryId: string } }
+  { params }: { params: { storeId: string; sizeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -71,32 +70,32 @@ export async function DELETE(
     if (!storeByUserId)
       return new NextResponse("Unauthorized", { status: 403 });
 
-    await prismadb.category.deleteMany({
+    await prismadb.size.deleteMany({
       where: {
-        id: params.categoryId,
+        id: params.sizeId,
       },
     });
     return new NextResponse("", { status: 201 });
   } catch (error) {
-    console.log("[CATEGORIES_DELETE]", error);
+    console.log("[SIZE_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
 // export async function GET(
 //   req: Request,
-//   { params }: { params: { billboardId: string } }
+//   { params }: { params: { value: string } }
 // ) {
 //   try {
-//     if (!params.billboardId)
+//     if (!params.value)
 //       return new NextResponse("Billboard id is required", { status: 400 });
 
-//     const category = await prismadb.category.findUnique({
+//     const size = await prismadb.size.findUnique({
 //       where: {
-//         id: params.billboardId,
+//         id: params.value,
 //       },
 //     });
-//     return NextResponse.json(category);
+//     return NextResponse.json(size);
 //   } catch (error) {
 //     console.log("[BILLBOARD_GET]", error);
 //     return new NextResponse("Internal error", { status: 500 });
