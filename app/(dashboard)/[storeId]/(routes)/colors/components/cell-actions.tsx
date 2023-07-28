@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-import { SizesColumn } from "./columns";
+import { ColorsColumn } from "./columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionsProps {
-  data: SizesColumn;
+  data: ColorsColumn;
 }
 
 const CellActions: React.FC<CellActionsProps> = ({ data }) => {
@@ -28,8 +28,8 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
-  const onCopy = (id: string) => {
-    navigator.clipboard.writeText(id);
+  const onCopy = (value: string) => {
+    navigator.clipboard.writeText(value);
     toast.success("Billboard ID copied to clipboard.");
   };
 
@@ -37,10 +37,10 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
     try {
       setLoading(true);
 
-      await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/colors/${data.id}`);
 
       router.refresh();
-      router.push(`/${params.storeId}/sizes`);
+      router.push(`/${params.storeId}/colors`);
       toast.success("Billboard deleted.");
     } catch (error) {
       toast.error(
@@ -69,12 +69,12 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data.id)}>
+          <DropdownMenuItem onClick={() => onCopy(data.value)}>
             <Copy className="h-4 w-4 mr-2" />
             Copy ID
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/sizes/${data.id}`)}
+            onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}
           >
             <Edit className="h-4 w-4 mr-2" />
             Update
