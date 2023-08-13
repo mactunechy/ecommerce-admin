@@ -8,6 +8,7 @@ export type OrderColumn = {
   phone: string;
   isPaid: boolean;
   totalPrice: string;
+  shippingStatus: string;
   products: string;
   createdAt: string;
 };
@@ -22,6 +23,10 @@ export const columns: ColumnDef<OrderColumn>[] = [
     header: "Phone",
   },
   {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
     accessorKey: "address",
     header: "Address",
   },
@@ -32,9 +37,18 @@ export const columns: ColumnDef<OrderColumn>[] = [
   {
     accessorKey: "isPaid",
     header: "Paid",
+    cell: ({ row }) => (row.original.isPaid ? "Yes" : "No"),
+  },
+  {
+    accessorKey: "shippingStatus",
+    header: "Shipping Status",
   },
   {
     accessorKey: "createdAt",
     header: "Date",
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <CellActions data={row.original} />,
   },
 ];

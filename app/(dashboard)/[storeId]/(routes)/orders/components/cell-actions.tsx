@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
+import {
+  ArrowLeftRight,
+  ArrowRightLeft,
+  Copy,
+  Edit,
+  MoreHorizontal,
+  Trash,
+  X,
+  XCircle,
+} from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
@@ -21,6 +30,8 @@ interface CellActionsProps {
   data: OrderColumn;
 }
 
+type shippingStatus = "PENDING" | "INPROGRESS" | "COMPLETE" | "CANCELLED";
+
 const CellActions: React.FC<CellActionsProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -28,24 +39,20 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
-  const onCopy = (id: string) => {
-    navigator.clipboard.writeText(id);
-    toast.success("billboard ID copied to clipboard.");
-  };
-
-  const onDelete = async () => {
+  const onChangeShippingStatus = async (newStatus: shippingStatus) => {
+    if (newStatus === data.shippingStatus) return;
     try {
       setLoading(true);
 
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.patch(`/api/${params.storeId}/orders/${data.id}`, {
+        shippingStatus: newStatus,
+      });
 
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success("billboard deleted.");
+      router.push(`/${params.storeId}/orders`);
+      toast.success(`Order ${newStatus.toLowerCase()}.`);
     } catch (error) {
-      toast.error(
-        "Make sure you removed all categories using this size first."
-      );
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -54,12 +61,6 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
 
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="h-8 w-8 p-0" variant={"ghost"}>
@@ -69,21 +70,19 @@ const CellActions: React.FC<CellActionsProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data.id)}>
-            <Copy className="h-4 w-4 mr-2" />
-            Copy ID
-          </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
-            }
+            onClick={() => onChangeShippingStatus("INPROGRESS")}
           >
-            <Edit className="h-4 w-4 mr-2" />
-            Update
+            <ArrowLeftRight className="h-4 w-4 mr-2" />
+            Move to in progress
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="h-4 w-4 mr-2" />
-            Delete
+          <DropdownMenuItem onClick={() => onChangeShippingStatus("COMPLETE")}>
+            <ArrowRightLeft className="h-4 w-4 mr-2" />
+            Move to complete
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onChangeShippingStatus("CANCELLED")}>
+            <X className="h-4 w-4 mr-2" />
+            Cancel
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
