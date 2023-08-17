@@ -22,6 +22,19 @@ export async function POST(request: Request) {
         shippingStatus: "INPROGRESS",
       },
     });
+
+    const productIds = JSON.parse(data.custom_str2);
+
+    await prismadb.product.updateMany({
+      where: {
+        id: {
+          in: productIds,
+        },
+      },
+      data: {
+        isArchived: true,
+      },
+    });
   }
 
   return new NextResponse("Success", { status: 201, headers: CORS_HEADERS });

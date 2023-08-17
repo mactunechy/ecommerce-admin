@@ -68,6 +68,7 @@ export async function POST(
     amount: totalPrice.toString(),
     item_name: products.map((product) => product.name).join(", "),
     custom_str1: order.id,
+    custom_str2: JSON.stringify(productIds),
   };
 
   try {
